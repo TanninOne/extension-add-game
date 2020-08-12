@@ -1,0 +1,56 @@
+#add-game-dialog {
+  .modal-dialog {
+    width: 80%;
+    .modal-body {
+      height: 50vh;
+      .icon-feedback-success {
+        width: 3em;
+        height: 3em;
+        color: $brand-success;
+      }
+    }
+  }
+
+  .form-horizontal {
+    padding: $half-gutter;
+  }
+
+  .suggestions {
+    position: absolute;
+    z-index: 1;
+    background-color: $brand-menu;
+    border: $border-width solid $border-color;
+    padding: 8px;
+    max-height: 10em;
+    overflow-y: auto;
+  }
+
+  .gameicon {
+    max-width: 400px;
+    max-height: 225px;
+  }
+
+  .input-group {
+    width: 100%;
+  }
+
+  .add-game-mod-type {
+    display: flex;
+    flex-direction: column;
+
+    border: $border-width solid $border-color;
+
+    .toggle-container {
+      margin-top: 0;
+    }
+
+    .form-group {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .add-game-stop-pattern {
+    display: flex;
+  }
+}

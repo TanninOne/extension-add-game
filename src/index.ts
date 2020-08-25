@@ -120,8 +120,10 @@ async function exportGame(
       { encoding: 'utf8' },
     );
 
-    const imageData = await util.rawRequest(imageUrl);
-    await fs.writeFileAsync(path.join(exportPath, spec.game.logo), imageData);
+    if (imageUrl !== undefined) {
+      const imageData = await util.rawRequest(imageUrl);
+      await fs.writeFileAsync(path.join(exportPath, spec.game.logo), imageData);
+    }
 
     api.sendNotification({
       type: 'success',

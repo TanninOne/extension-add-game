@@ -1,5 +1,5 @@
 {
-  "name": "add-game",
+  "name": "add-game-wizard",
   "description": "Add support for games to Vortex without programming",
   "version": "1.0.0",
   "main": "./out/index.js",
@@ -7,12 +7,14 @@
   "author": "Tannin",
   "scripts": {
     "webpack": "node ./node_modules/webpack/bin/webpack --config webpack.config.js --display-error-details --progress --profile --color",
-    "build": "npm run webpack && copyfiles -f src/ext_template.js dist && copyfiles -f src/add-game.scss dist && extractInfo"
+    "bundle7z": "7z a -t7z add-game.7z .\\dist\\index.js .\\dist\\info.json .\\dist\\add-game.scss .\\dist\\ext_template.js",
+    "build": "del add-game.7z && npm run webpack && copyfiles -f src/ext_template.js dist && copyfiles -f src/add-game.scss dist && extractInfo"
   },
   "peerDependencies": {
     "typescript": "^3.8.0"
   },
   "dependencies": {
+    "7z-bin": "Nexus-Mods/7z-bin",
     "@types/react-autosuggest": "^9.3.14",
     "@types/fs-extra": "^9.0.1",
     "@types/node": "^12.0.0",

@@ -17,7 +17,6 @@ import Select from 'react-select';
 import { generate as shortid } from 'shortid';
 import {
   ComponentEx,
-  Dropdown,
   FormInput,
   Modal,
   types,
@@ -26,9 +25,9 @@ import {
   Spinner,
   Toggle,
   tooltip,
-  util,
   Usage,
   FlexLayout,
+  log,
 } from 'vortex-api';
 import { IGameSpec, IModTypeSpec } from './types';
 import { TFunction } from 'i18next';
@@ -737,12 +736,15 @@ class AddGameDialog extends ComponentEx<IProps, IAddGameState> {
 
     const executable = path.relative(values['game_path'], values['exe_path']);
     const id = this.deduceId();
+    const imageName = values['image_url'] !== undefined
+      ? `${id}${path.extname(values['image_url'])}`
+      : 'gameart.jpg';
     const res: IGameSpec = {
       game: {
         id,
         name: values['name'],
         executable,
-        logo: `games/${id}${path.extname(values['image_url'])}`,
+        logo: imageName,
         mergeMods: values['merge_mods'] ?? true,
         modPath: values['mod_path'],
         modPathIsRelative: false,

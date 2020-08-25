@@ -472,10 +472,14 @@ class AddGameDialog extends ComponentEx<IProps, IAddGameState> {
 
     Object.keys(storeGames).forEach((storeId) => {
       storeGames[storeId].forEach((gameEntry) => {
-        options.push({
-          label: gameEntry.name,
-          value: `${storeId}:${gameEntry.appid}`,
-        });
+        if (gameEntry.name !== undefined) {
+          options.push({
+            label: gameEntry.name,
+            value: `${storeId}:${gameEntry.appid}`,
+          });
+        } else {
+          log('warn', 'invalid game entry', JSON.stringify(gameEntry));
+        }
       });
     });
 

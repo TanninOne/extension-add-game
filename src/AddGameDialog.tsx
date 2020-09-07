@@ -589,6 +589,17 @@ class AddGameDialog extends ComponentEx<IProps, IAddGameState> {
               'folder of the game.',
           )}
         </Usage>
+        <FormLine t={t} controlId='add-game-start-via-store' title={t('Start via Store')}>
+          <Toggle
+            disabled={values['store_game'] === undefined}
+            checked={values['start_via_store'] !== undefined}
+            onToggle={this.changeFunc('start_via_store')}
+          />
+        </FormLine>
+        <Usage infoId='add-game-start-via-store' persistent>
+          {t('Some games can\'t be run directly but have to be run through the store ' +
+             'you bought them on. Please enable only if that is necessary.')}
+        </Usage>
         <FormLine
           t={t}
           controlId='exe-path'
@@ -738,11 +749,16 @@ class AddGameDialog extends ComponentEx<IProps, IAddGameState> {
     const { storeGames } = this.props;
     const { values } = this.state;
 
-    const executable = path.relative(values['game_path'], values['exe_path']);
+    const executable = (values['exe_path'] !== undefined)
+      ? path.relative(values['game_path'], values['exe_path'])
+      : undefined;
     const id = this.deduceId();
     const imageName = values['image_url'] !== undefined
       ? `${id}${path.extname(values['image_url'])}`
       : 'gameart.jpg';
+    const requiresLauncher =(values['start_via_store'] === true)
+      ? values['store_game'].split(':')[0]
+      : undefined;
     const res: IGameSpec = {
       game: {
         id,
@@ -755,6 +771,7 @@ class AddGameDialog extends ComponentEx<IProps, IAddGameState> {
         requiredFiles: [executable],
         details: {},
         environment: {},
+        requiresLauncher,
       },
       modTypes: values['mod_types'],
       discovery: {
@@ -778,9 +795,11 @@ class AddGameDialog extends ComponentEx<IProps, IAddGameState> {
 
     if (values['store_game'] !== undefined) {
       const [storeId, appId] = values['store_game'].split(':');
+      /*
       const storeInfo = (storeGames[storeId] || []).find(
         (entry) => entry.appid === appId,
       );
+      */
 
       res.discovery.ids.push(appId);
 

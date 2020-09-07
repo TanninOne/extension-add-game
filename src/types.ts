@@ -14,10 +14,11 @@ export interface IDiscoverySpec {
   names: string[];
 }
 
-export interface IGame extends Omit<types.IGame, 'queryPath' | 'queryModPath' | 'executable'> {
+export interface IGame extends Omit<types.IGame, 'queryPath' | 'queryModPath' | 'executable' | 'requiresLauncher'> {
   modPath: string;
   modPathIsRelative: boolean;
   executable: string;
+  requiresLauncher?: string;
 }
 
 export interface IGameSpec {

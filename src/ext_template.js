@@ -125,7 +125,7 @@ const template = require('string-template');
  *     : Promise.resolve(undefined))
  *   .catch(err => Promise.reject(err));
  */
-{requiresLanucherFunc}
+{requiresLauncherFunc}
 
 /*
  * This function takes the game specification above and triggers the actual api calls

@@ -34,8 +34,11 @@ function makeGetModPath(api: types.IExtensionApi, gameSpec: IGameSpec) {
       : pathPattern(api, gameSpec.game, gameSpec.game.modPath);
 }
 
-function requiresLauncher(gamePath: string) {
-  return Promise.resolve(undefined);
+function makeRequiresLauncher(api: types.IExtensionApi, gameSpec: IGameSpec) {
+  return () =>
+    Promise.resolve((gameSpec.game.requiresLauncher !== undefined)
+      ? { launcher: gameSpec.game.requiresLauncher }
+      : undefined);
 }
 
 function pathPattern(
@@ -46,6 +49,8 @@ function pathPattern(
   return template(pattern, {
     gamePath: api.getState().settings.gameMode.discovered[game.id]?.path,
     documents: util.getVortexPath('documents'),
+    localAppData: process.env['LOCALAPPDATA'],
+    appData: util.getVortexPath('appData'),
   });
 }
 
@@ -56,7 +61,7 @@ function applyGame(context: types.IExtensionContext, gameSpec: IGameSpec) {
     ...gameSpec.game,
     queryPath: makeFindGame(context.api, gameSpec),
     queryModPath: makeGetModPath(context.api, gameSpec),
-    requiresLauncher,
+    requiresLauncher: makeRequiresLauncher(context.api, gameSpec),
     requiresCleanup: true,
     executable: () => gameSpec.game.executable,
     supportedTools: tools,
@@ -104,7 +109,7 @@ async function exportGame(
       pathPatternFunc: pathPattern.toString(),
       queryPathFunc: makeFindGame.toString(),
       queryModPathFunc: makeGetModPath.toString(),
-      requiresLanucherFunc: requiresLauncher.toString(),
+      requiresLauncherFunc: makeRequiresLauncher.toString(),
       applyFunc: applyGame.toString(),
     });
     const exportPath = path.resolve(__dirname, '..', `game-${spec.game.id}`);

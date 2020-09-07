@@ -194,7 +194,11 @@ function init(context: types.IExtensionContext): boolean {
     // fetch info for store games
     Promise.all(
       GAME_STORES.map((storeId) => {
-        return util.GameStoreHelper.getGameStore(storeId)
+        const store = util.GameStoreHelper.getGameStore(storeId);
+        if (store === undefined) {
+          return null;
+        }
+        return store
           .allGames()
           .then((games) => ({
             storeId,
@@ -206,7 +210,9 @@ function init(context: types.IExtensionContext): boolean {
       }),
     ).then((results) => {
       results.forEach((res) => {
-        extState.storeGames[res.storeId] = res.games;
+        if (res !== null) {
+          extState.storeGames[res.storeId] = res.games;
+        }
       });
     });
   });

@@ -355,7 +355,7 @@ class AddGameDialog extends ComponentEx<IProps, IAddGameState> {
   }
 
   public render(): JSX.Element {
-    const { t, visible, onHide } = this.props;
+    const { t, visible } = this.props;
     const { step, working } = this.state;
 
     const page = {
@@ -366,6 +366,8 @@ class AddGameDialog extends ComponentEx<IProps, IAddGameState> {
       modtypes: () => this.renderModType(),
       review: () => this.renderReview(),
     }[step];
+
+    const validated: boolean = this.validate(step);
 
     return (
       <Modal show={visible} onHide={nop} id='add-game-dialog'>
@@ -378,9 +380,9 @@ class AddGameDialog extends ComponentEx<IProps, IAddGameState> {
           <Button onClick={this.cancel}>{t('Cancel')}</Button>
           {(step === 'intro') ? null : <Button onClick={this.back}>{t('Back')}</Button>}
           {step === STEPS[STEPS.length - 1] ? (
-            <Button onClick={this.save}>{t('Save')}</Button>
+            <Button disabled={!validated} onClick={this.save}>{t('Save')}</Button>
           ) : (
-            <Button onClick={this.next}>{t('Next')}</Button>
+            <Button disabled={!validated} onClick={this.next}>{t('Next')}</Button>
           )}
         </Modal.Footer>
       </Modal>
@@ -517,7 +519,7 @@ class AddGameDialog extends ComponentEx<IProps, IAddGameState> {
             className='select-compact'
             options={options}
             value={values['store_game'] || ''}
-            onChange={this.changeFunc('store_game', (input) => input.value)}
+            onChange={this.changeFunc('store_game', (input) => input?.value)}
           />
         </FormLine>
       </Form>
@@ -958,6 +960,26 @@ class AddGameDialog extends ComponentEx<IProps, IAddGameState> {
     }
 
     return this.mChangeFuncs[key];
+  }
+
+  private validate(step: StepT) {
+    const idx = STEPS.indexOf(step);
+
+    if (idx >= 1) {
+      if (this.validateDomain().state === 'error') {
+        return false;
+      }
+    }
+
+    if (idx >= 2) {
+      if ((this.validateName().state === 'error')
+          || (this.validateExePath().state === 'error')
+          || (this.validateGamePath().state === 'error')) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   private validateName = (): IValidationResult => {

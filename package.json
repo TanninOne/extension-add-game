@@ -1,7 +1,7 @@
 {
   "name": "add-game-wizard",
   "description": "Add support for games to Vortex without programming",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "main": "./out/index.js",
   "license": "GPL-3.0",
   "author": "Tannin",

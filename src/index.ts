@@ -5,7 +5,7 @@ import * as fsx from 'fs-extra';
 import * as path from 'path';
 import * as template from 'string-template';
 import * as vortexApi from 'vortex-api';
-import { types } from 'vortex-api';
+import { log, types } from 'vortex-api';
 
 const { actions, fs, util } = vortexApi;
 
@@ -199,19 +199,24 @@ function init(context: types.IExtensionContext): boolean {
     // fetch info for store games
     Promise.all(
       GAME_STORES.map((storeId) => {
-        const store = util.GameStoreHelper.getGameStore(storeId);
-        if (store === undefined) {
+        try {
+          const store = util.GameStoreHelper.getGameStore(storeId);
+          if (store === undefined) {
+            return null;
+          }
+          return store
+            .allGames()
+            .then((games) => ({
+              storeId,
+              games: util.unique<types.IGameStoreEntry, any>(
+                games,
+                (item) => item.appid,
+              ),
+            }));
+        } catch (err) {
+          log('debug', 'game store not found', { storeId, error: err.message });
           return null;
         }
-        return store
-          .allGames()
-          .then((games) => ({
-            storeId,
-            games: util.unique<types.IGameStoreEntry, any>(
-              games,
-              (item) => item.appid,
-            ),
-          }));
       }),
     ).then((results) => {
       results.forEach((res) => {
